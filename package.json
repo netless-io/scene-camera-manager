@@ -1,5 +1,5 @@
 {
-  "name": "scene-camera-manager",
+  "name": "@netless/scene-camera-manager",
   "version": "1.0.0",
   "description": "白板 `scene` 之间的 `cameraState` 隔离插件",
   "main": "dist/index.js",
