@@ -14,7 +14,7 @@ export class SceneCameraManager {
         const contextPath = this.room.state.sceneState.contextPath;
         const sceneCameraState = this.getGlobalSceneCameraState(this.room.state.globalState, contextPath);
         if (sceneCameraState) {
-           this.room.moveCamera({ ...sceneCameraState, animationMode: AnimationMode.Immediately });
+            this.moveCamera(sceneCameraState.scale, sceneCameraState.centerX, sceneCameraState.centerY);
         }
     }
 
@@ -31,15 +31,10 @@ export class SceneCameraManager {
             if (sceneCameraState) {
                 const currentState = this.getSceneCameraState(this.room.state.cameraState);
                 if (JSON.stringify(sceneCameraState) !== JSON.stringify(currentState)) {
-                    this.room.moveCamera({
-                        scale: sceneCameraState.scale,
-                        centerX: sceneCameraState.centerX,
-                        centerY: sceneCameraState.centerY,
-                        animationMode: AnimationMode.Immediately
-                    })
+                    this.moveCamera(sceneCameraState.scale, sceneCameraState.centerX, sceneCameraState.centerY);
                 }
             } else {
-                this.room.moveCamera({ scale: 1, centerX: 0, centerY: 0, animationMode: AnimationMode.Immediately });
+                this.moveCamera(1, 0, 0);
             }
         }
     }
@@ -55,6 +50,13 @@ export class SceneCameraManager {
     private getGlobalSceneCameraState(globalState: any, contextPath: string): SceneCameraState | undefined {
         const path = `${this.prefix}-${contextPath}-${this.userId}`;
         return globalState[path];
+    }
+
+    private moveCamera(scale: number, centerX: number, centerY: number): void {
+        this.room.moveCamera({
+            scale, centerX, centerY,
+            animationMode: AnimationMode.Immediately
+        });
     }
 
     public uninstall(): void {
