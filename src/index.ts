@@ -11,8 +11,8 @@ export class SceneCameraManager {
         this.room = room;
         this.userId = userId;
         room.callbacks.on("onRoomStateChanged", this.roomStateChangeListener);
-        const contextPath = this.room.state.sceneState.contextPath;
-        const sceneCameraState = this.getGlobalSceneCameraState(this.room.state.globalState, contextPath);
+        const { contextPath, index } = this.room.state.sceneState;
+        const sceneCameraState = this.getGlobalSceneCameraState(this.room.state.globalState, contextPath, index);
         if (sceneCameraState) {
             this.moveCamera(sceneCameraState.scale, sceneCameraState.centerX, sceneCameraState.centerY);
         }
@@ -20,14 +20,14 @@ export class SceneCameraManager {
 
     private roomStateChangeListener = (state: Partial<RoomState>) => {
         if (state.cameraState) {
-            const contextPath = this.room.state.sceneState.contextPath;
+            const { contextPath, index } = this.room.state.sceneState;
             this.room.setGlobalState({
-                [`${this.prefix}-${contextPath}-${this.userId}`]: this.getSceneCameraState(state.cameraState),
-            })
+                [`${this.prefix}-${contextPath}-${index}-${this.userId}`]: this.getSceneCameraState(state.cameraState),
+            });
         }
         if (state.sceneState) {
-            const contextPath = state.sceneState.contextPath;
-            const sceneCameraState = this.getGlobalSceneCameraState(this.room.state.globalState, contextPath);
+            const { contextPath, index } = state.sceneState;
+            const sceneCameraState = this.getGlobalSceneCameraState(this.room.state.globalState, contextPath, index);
             if (sceneCameraState) {
                 const currentState = this.getSceneCameraState(this.room.state.cameraState);
                 if (JSON.stringify(sceneCameraState) !== JSON.stringify(currentState)) {
@@ -47,8 +47,8 @@ export class SceneCameraManager {
         };
     }
 
-    private getGlobalSceneCameraState(globalState: any, contextPath: string): SceneCameraState | undefined {
-        const path = `${this.prefix}-${contextPath}-${this.userId}`;
+    private getGlobalSceneCameraState(globalState: any, contextPath: string, index: number): SceneCameraState | undefined {
+        const path = `${this.prefix}-${contextPath}-${index}-${this.userId}`;
         return globalState[path];
     }
 
