@@ -21,9 +21,11 @@ export class SceneCameraManager {
     private roomStateChangeListener = (state: Partial<RoomState>) => {
         if (state.cameraState) {
             const { contextPath, index } = this.room.state.sceneState;
-            this.room.setGlobalState({
-                [`${this.prefix}-${contextPath}-${index}-${this.userId}`]: this.getSceneCameraState(state.cameraState),
-            });
+            if (this.room.isWritable) {
+                this.room.setGlobalState({
+                    [`${this.prefix}-${contextPath}-${index}-${this.userId}`]: this.getSceneCameraState(state.cameraState),
+                });
+            }
         }
         if (state.sceneState) {
             const { contextPath, index } = state.sceneState;
